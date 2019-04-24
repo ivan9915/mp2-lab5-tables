@@ -111,7 +111,7 @@ TEST(table, correct_clear_HTable)
 	T.inseart(L1);
 	T.inseart(L2);
 	T.clrTable();
-	EXPECT_EQ(T.polinoms[0].head, nullptr);
+	EXPECT_EQ(T.polinoms[0].empty, true);
 }
 
 

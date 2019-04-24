@@ -1,7 +1,7 @@
 #ifndef _Table_
 #define _Table_
 #include "List.h"
-
+#include <vector>
 #define BUFF 2
 
 template<class Tip>
@@ -360,20 +360,20 @@ class hashTable
 
 public:
 	const int sizeMass = 64;
-	List<List<double>> *polinoms;
+	vector<List<double>> *polinoms;
 	
 	hashTable()
 	{
 		flout << "creat the hash table" << endl;
-		polinoms = new List<List<double>>[sizeMass];
+		polinoms = new vector<List<double>>[sizeMass];
 	}
 
 	void clrTable()
 	{
 		int i;
 		flout << "delete the hash table" << endl;
-		for(i = 0; i<64; i++)
-			polinoms[i].ClrL();
+		for (i = 0; i < sizeMass; i++)
+			polinoms[i].clear();
 		delete[] polinoms;
 		polinoms = new List<List<double>>[sizeMass];
 	}
@@ -399,7 +399,7 @@ public:
 	{
 		flout << "iseart in the hash table" << endl;
 		int hc = hashCode(a);
-		polinoms[hc].insert(a);
+		polinoms[hc].push_back(a);
 	}
 
 	void work()
@@ -439,14 +439,15 @@ public:
 		flout << "search in hash table" << endl;
 		int j=0;
 		int hc = hashCode(a);
-		Node<List<double>> *tmp1 = polinoms[hc].head;
-		while (tmp1 != nullptr)
+
+		vector<List<double>> tmp1 = polinoms[hc];
+		for(int i = 0; i< tmp1.size(); i++)
 		{
 			j++;
-			if (comp(tmp1->coef, a) == 0)
+			if (comp(tmp1[i], a) == 0)
 			{
 				flout << "    number of actions: " << j << endl;
-				return j;
+				return j -1;
 			}
 		}
 		flout << "    number of actions: " << j << endl;
@@ -456,67 +457,41 @@ public:
 
 	void del(List<Tip> a)
 	{
-		flout << "del elem in hash table" << endl;
-		int tmp=0;
+		flout << "del elem in hash table(action as del elem in vector)" << endl;
+
 		int k = search(a);
 		if (k == -1)
 			return;
 		int hc = hashCode(a);
-		
-		if (comp(polinoms[hc].head->coef, a) == 0)
-			polinoms[hc].head = polinoms[hc].head->next;
 
-		Node<List<double>> *tmp1 = polinoms[hc].head;
-		if (tmp1 == nullptr)
-			return;
-
-		while (tmp1->next != nullptr)
-		{
-			tmp++;
-			if (comp(tmp1->next->coef, a) == 0)
-				break;
-			tmp1 = tmp1->next;
-		}
-		if (tmp1->next->next != nullptr)
-			tmp1->next = tmp1->next->next;
-		else
-			tmp1->next = nullptr;
-		flout << "    number of actions: " << tmp << endl;
+		auto iter = polinoms[hc].cbegin(); 
+		polinoms[hc].erase(iter + k - 1);
+	
 	}
 
 	void show()
 	{
 		for (int i = 0; i < 64; i++)
 		{
-			Node<List<double>> *tmp1 = polinoms[i].head;
-			if (tmp1 != nullptr) 
+			if (!polinoms[i].empty())
 			{
-				cout << i << ") ";
-				cout << endl;
-				int j = 0;
-				while (tmp1->next != nullptr)
+				cout << i << ")" << endl;
+				for (int j = 0; j < polinoms[i].size(); j++)
 				{
-					j++;
-					cout << "          "<<i<<"."<<j<<")  ";
-					List<double> T = tmp1->coef;
-					T.print();
-					tmp1 = tmp1->next;
+					cout << "    " << i << "." << j << ") ";
+					polinoms[i][j].print();
 					cout << endl;
 				}
-				
 			}
+			
 		}
 	}
 
 	List<Tip> getPolinom(int tmp1, int tmp2)
 	{
-		flout << "get at sorted table" << endl;
-		int i;
-		Node<List<double>> *tmp3 = polinoms[tmp1].head;
-		for (i = 0; i < tmp2; i++)
-			tmp3 = tmp3->next;
-		flout << "    number of actions: " << i << endl;
-		return tmp3->coef;
+		flout << "get at hash table" << endl;
+		
+		return polinoms[tmp1][tmp2];
 	}
 };
 
