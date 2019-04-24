@@ -465,7 +465,7 @@ public:
 		int hc = hashCode(a);
 
 		auto iter = polinoms[hc].cbegin(); 
-		polinoms[hc].erase(iter + k - 1);
+		polinoms[hc].erase(iter + k);
 	
 	}
 
